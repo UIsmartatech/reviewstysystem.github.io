@@ -1,0 +1,100 @@
+.DashboardContainer {
+    display: flex;
+    width: 100%;
+}
+.employ-detail-panel{
+    margin: auto;
+}
+
+.mainContent {
+    max-width: 80%;
+    width: 100%;
+    background: #ffffff63;
+    border-radius: 15px;
+    margin: 10px 15px;
+    margin-top: 0px;
+    box-shadow: 1px 1px 10px #cbc8c8;
+}
+.all-member-section .card {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.profile-part h3 {
+    color: #000;
+    margin: 0px;
+    line-height: 25px;
+    font-size: 16px;
+    font-style: normal;
+    font-size: 1.2rem;
+}
+.welcome-section h5 {
+    color: #000000;
+    text-align: left;
+    margin: 0px;
+    padding-top: 20px;
+    line-height: 30px;
+    font-family: 'poppins-semibold';
+}
+.welcome-section p {
+    font-size: 1rem;
+    color: #000000;
+    text-align: left;
+    margin: 0px;
+    line-height: 30px;
+    font-family: 'poppins-regular';
+}
+
+
+.all-member-section .card .employ-img {
+    width: 119px;
+    height: 119px;
+    border-radius: 100%;
+    text-align: center;
+    margin: 10px auto;
+}
+.employ-img img {
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
+}
+.all-member-section {
+
+    width: 100%;
+    display: flex;
+}
+.card-title.h5 {
+    font-size: 22px;
+    font-family: 'poppins-semibold';
+    line-height: 28px;
+    margin-bottom: 3px;
+}
+.all-member-section .card p.card-text {
+    font-family: 'poppins-regular';
+    line-height: 30px;
+    margin-bottom: 12px;
+    font-size: 1rem;
+}
+.rating-panel p {
+    font-size: 1rem;
+    font-family: 'poppins-regular';
+    margin-bottom: 3px;
+}
+.welcome-section {
+    margin-bottom: 30px;
+    padding-left: 15px;
+}
+.employ-panel {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    gap: 10px;
+}
+
+ /* header section */
+
+.welcome-section {
+    display: flex;
+    justify-content: space-between;
+}

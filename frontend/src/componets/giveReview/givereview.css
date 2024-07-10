@@ -1,0 +1,101 @@
+.get-review-container {
+    display: flex;
+    width: 100%;
+}
+span.input-group-text {
+    padding: 0px;
+    margin-right: 10px;
+    align-items: center;
+    background: transparent;
+    padding-left: 10px;
+    border: 0px;
+}
+.review-form {
+    background: #ffff;
+    padding: 30px 15px;
+    border-radius: 15px;
+}
+
+.review-section {
+    padding: 15px;
+}
+.employ-detail-panel.text-align-left {
+    text-align: left;
+    margin: 0px;
+}
+.comment.mt-3.form-floating label {
+    font-size: 15px;
+    font-family: 'poppins-regular';
+}
+.review-total svg {
+    font-size: 18px;
+}
+.review-total svg {
+    font-size: 18px;
+    color: gold;
+}
+.all-card-section .card {
+    text-align: left;
+    display: block;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+.card .card-body {
+    text-align: center;
+    padding-left: 5px;
+}
+.star-icons {
+    font-size: 12px;
+    font-family: 'poppins-regular';
+}
+.input-group .star-icons {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+ul.employ-name {
+    padding-left: 0px;
+    list-style-type: none;
+    line-height: 34px;
+    margin-bottom: 0px;
+    font-family: 'poppins-semibold';
+}
+.star-icons svg {
+    font-size: 18px;
+    margin: 4px 0px;
+}
+.ratingStars {
+    display: flex;
+    align-items: center;
+}
+.employ-img.give_reiview_img img {
+    height: 98px;
+    max-width: 100px;
+    height: 100px;
+    width: 100%;
+    border-radius: 100%;
+}
+.employ-img.give_reiview_img {
+    text-align: center;
+}
+.Star{
+cursor: pointer;
+}
+.progress {
+    height: 6px !important;
+    margin-bottom: 10px;
+    width: 300px;
+    margin-top: 10px;
+}
+.progressbar span {
+    font-size: 12px;
+    font-family: 'poppins-regular';
+    margin: 0px 10px;
+}
+
+.criteria p {
+    font-family: 'poppins-regular';
+    font-size: 14px;
+    margin-bottom: 6px;
+    text-align: left;
+    margin-left: 10px;
+}

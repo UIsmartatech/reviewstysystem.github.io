@@ -1,0 +1,128 @@
+.sidenav ul {
+    padding-left: 0px;
+    margin: 0px;
+}
+.sidenav li {
+    text-align: left;
+    padding: 10px 20px;
+    font-family: 'poppins-regular';
+    cursor: pointer;
+}
+.sidenav li a {
+    font-size: 1rem;
+    text-decoration: none;
+    color: #000000;
+}
+.sidenav ul li a {
+    align-items: center;
+    display: flex;
+}
+.sidenav {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    height: 100vh;
+}
+.sidenav li svg {
+    margin-right: 10px;
+}
+
+.sidebar {
+    width: 20%;
+    background: #d7d7d742;
+    padding: 0px;
+    margin-top: 0px;
+    border-radius: 15px;
+    padding-top: 25px;
+    box-shadow: 1px 2px 3px #dedede;
+    position: relative;
+}
+nav a {
+    display: block;
+}
+.sidenav a {
+    color: #fff;
+    transition: 1s;
+    background-position: 100% 0;
+    margin: 20px 0px;
+}
+.sidenav li:hover {
+    background: #f27022;
+    color: #fff;
+    transition: 1s;
+    background-position: 100% 0;
+    padding-left: 10px;
+}
+
+.logo-part {
+    padding-bottom: 15px;
+    border-bottom: 2px solid #ff8842;
+    margin: 10px;
+    /* display: flex; */
+    align-items: center;
+}
+.logo-part img {
+    max-width: 150px;
+}
+.profile-part h3 {
+    color: #000;
+    margin: 0px;
+    line-height: 25px;
+    font-size: 16px;
+    font-style: normal;
+    text-transform: capitalize;
+    font-family: 'poppins-semibold';
+}
+.profile-part img {
+    max-width: 40px;
+    width: 100%;
+    /* padding: 5px; */
+    height: 40px;
+    border-radius: 100%;
+    margin-right: 10px;
+}
+.sidenav li:hover a{
+    color: #fff;
+}
+.profile-part {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-right: 15px;
+}
+.profile-part p {
+    margin: 0px;
+    color: #000001;
+    line-height: 1.8rem;
+    font-size: .8rem;
+    padding-right: 10px;
+}
+.employ-details p {
+    font-family: 'poppins-regular';
+    font-size: .8rem;
+}
+.employ-details {
+    justify-content: flex-start;
+    display: block;
+    text-align: left;
+    padding-left: 10px;
+}
+.sidebarContainer {
+    position: fixed;
+    display: inline-block;
+    width: 20%;
+    padding-right: 35px;
+}
+.sidenav a {
+    text-decoration: none;
+    padding: 10px;
+    color: black;
+  }
+  
+  .sidenav a.active {
+    background: #f27022;
+    color: #fff;
+    transition: 1s;
+    background-position: 100% 0;
+    padding-left: 10px;
+  }
