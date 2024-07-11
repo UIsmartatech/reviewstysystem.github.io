@@ -239,6 +239,11 @@ app.post("/review", authenticateToken, (req, res) => {
   });
 });
 
+app.get("/gettotalstar", authenticateToken, (req, res) => {
+  const reviewer = req.user.name;
+  console.log(reviewer);
+})
+
 // Route to fetch user's profile image
 app.get('/profile/image', authenticateToken, (req, res) => {
   const userEmail = req.email;

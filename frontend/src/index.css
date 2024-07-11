@@ -50,3 +50,8 @@ p {
   font-size: 16px;
   font-family: 'poppins-regular';
 }
+.form-check-input {
+  border: var(--bs-border-width) solid #7fa8d2 !important;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
