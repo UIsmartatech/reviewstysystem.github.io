@@ -270,7 +270,7 @@ app.get('/profile/image', authenticateToken, (req, res) => {
 
 //fething the data fro the admin view
 app.get("/preview_user", (req, res) => {
-  const sql = "SELECT * FROM review_table";
+  const sql = "SELECT * FROM personal_profile";
   db.query(sql, (err, result) => {
     if (err) return res.json({ message: "error inside thte server" });
     else return res.json(result);

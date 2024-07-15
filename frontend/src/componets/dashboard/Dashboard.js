@@ -12,6 +12,13 @@ function DashboardComponent() {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
   const [profileImageUrl, setProfileImageUrl] = useState(null);
+  const token = sessionStorage.getItem("token");
+    if (token) {
+      const decoded = jwtDecode(token);
+      console.log("decode token:", decoded);
+    } else {
+      console.error("no token found");
+    }
 
   useEffect(() => {
     const token = sessionStorage.getItem("token");
@@ -41,13 +48,7 @@ function DashboardComponent() {
   }, []);
 
   const fetchProfileImage = () => {
-    const token = sessionStorage.getItem("token");
-    if (token) {
-      const decoded = jwtDecode(token);
-      console.log("decode token:", decoded);
-    } else {
-      console.error("no token found");
-    }
+    
     axios
       .get("http://localhost:8081/profile/image", {
         headers: {
@@ -62,6 +63,19 @@ function DashboardComponent() {
         console.error('Error fetching profile image:', error);
       });
   };
+
+  useEffect(()=>{
+    axios.get("http://localhost:8081/preview_user",{
+      headers:{
+        authorization: `Bearer ${token}`,
+      },
+    })
+      .then(response => {
+        const userdata = response.data;
+         console.log("userdata:",userdata);
+      })
+    })
+  
   return (
     <div className="DashboardContainer">
       <div className="sidebar">
