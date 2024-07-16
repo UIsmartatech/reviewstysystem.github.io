@@ -11,6 +11,9 @@ require("dotenv").config();
 const multer = require("multer");
 const path = require("path");
 const port = 8081; // or any port you prefer
+const http = "http";
+const hostname = '0.0.0.0'
+
 
 let otpStore = {}; // To store OTPs temporarily
 const app = express();
@@ -239,10 +242,26 @@ app.post("/review", authenticateToken, (req, res) => {
   });
 });
 
-app.get("/gettotalstar", authenticateToken, (req, res) => {
+// Route to get total stars
+app.get('/gettotalstar', authenticateToken, (req, res) => {
   const reviewer = req.user.name;
-  console.log(reviewer);
-})
+  const sql = `SELECT SUM(stars) AS totalStars ROM review_table WHERE reviewer = ? 
+    AND review_date >= DATE_SUB(NOW(), INTERVAL 1 MONTH)`;
+
+  console.log(reviewer); // Logging reviewer name for testing/debugging
+
+  // Execute SQL query
+  db.query(sql, [reviewer], (err, results) => {
+    if (err) {
+      console.error('Error executing query:', err);
+      return res.status(500).json({ message: 'Error inside the server' });
+    }
+    // Assuming results[0].totalStars contains the total stars sum
+    return res.json({ totalStars: results[0].totalStars });
+    console.log(results[0].totalStars);
+  });
+});
+
 
 // Route to fetch user's profile image
 app.get('/profile/image', authenticateToken, (req, res) => {
@@ -313,6 +332,7 @@ app.post("/personal-profile-insert", async (req, res) => {
   );
 });
 
-app.listen(8081, () => {
-  console.log("listening");
+
+app.listen(port ,hostname , () => {
+  console.log('listening at');
 });

@@ -64,22 +64,12 @@ function DashboardComponent() {
       });
   };
 
-  useEffect(()=>{
-    axios.get("http://localhost:8081/preview_user",{
-      headers:{
-        authorization: `Bearer ${token}`,
-      },
-    })
-      .then(response => {
-        const userdata = response.data;
-         console.log("userdata:",userdata);
-      })
-    })
+
   
   return (
     <div className="DashboardContainer">
       <div className="sidebar">
-        <SidebarComponent />
+          <SidebarComponent />
       </div>
       <div className="mainContent">
         <div className="welcome-section">

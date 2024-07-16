@@ -29,6 +29,21 @@ const GiveReview = () => {
   const [reviewer, setReviewer] = useState("");
 
 
+  useEffect(() => {
+    axios.get("http://localhost:8081/gettotalstar")
+    .then((response)=> {
+      const token = sessionStorage.getItem("token");
+      const decoded = jwtDecode(token);
+      const filtertoken = decoded.name;
+      setReviewer(filtertoken);
+      const allgivenStar = response.data;
+      console.log("givenallstar:", allgivenStar)
+    })
+    .catch((error) => {
+      setMessage("Error fetching review user data");
+      console.error("Error fetching data:", error);
+    });
+  })
 
   useEffect(() => {
     axios
@@ -194,14 +209,15 @@ const GiveReview = () => {
                           <p>
                             <span className="small"></span>{" "}
                             <Star className="text-yellow-600" />{" "}
-                            <span className="small">({totalStars} reviews)</span>
+                            <span className="small">({45} reviews)</span>
                           </p>
+                        
                         </div>
                       </div>
                     </div>
                   </div>
                   <div className="col-sm-6">
-                    <div className="progressbar">
+                    {/* <div className="progressbar">
                       <div className="d-flex align-items-center justify-content-center">
                         {" "}
                         <span> 5 Star</span>
@@ -210,7 +226,7 @@ const GiveReview = () => {
                           <span>5 reviews</span>
                         </a>{" "}
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </div>
