@@ -9,8 +9,8 @@ label.form-label {
     margin-top: 10px;
     text-align: center;
 }
-.button-group .btn-primary {
-    background: #000000;
+.button-group .btn-theme {
+    background: #f27022;
     height: 44px;
     font-family: 'poppins-regular';
     font-size: 16px;
@@ -52,4 +52,10 @@ form.profile-container {
     position: relative;
     left: 32px;
     top: -23px;
+}
+.employ-detail-panel .card {
+    border: 0px;
+    box-shadow: 1px 2px 3px #dedede;
+    border-radius: 10px;
+    margin: 15px;
 }

@@ -71,6 +71,27 @@ app.get("/", (req, res) => {
   });
 });
 
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).send({ status: 'failed', message: 'No token provided' });
+  }
+
+  const token = authHeader.split(' ')[1];
+
+  jwt.verify(token, JWT_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(403).send({ status: 'failed', message: 'Forbidden' });
+    }
+
+    req.email = decoded.email;
+    req.user = decoded;
+
+    next();
+  });
+};
+
 //sent otp n Point
 app.post("/send-otp", (req, res) => {
   const { email } = req.body;
@@ -155,25 +176,7 @@ app.post("/verify-otp", (req, res) => {
   }
 });
 
-const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers.authorization;
 
-  if (!authHeader) {
-    return res.status(403).send({ Status: 'failed', message: 'No token provided' });
-  }
-
-  const token = authHeader.split(' ')[1];
-  jwt.verify(token, JWT_SECRET, (err, decoded) => {
-    if (err) {
-      return res.status(403).send({ Status: 'failed', message: 'Forbidden' });
-    }
-    // Save the decoded email in the request object
-       req.email = decoded.email;
-       req.user = decoded;
-     
-    next();
-  });
-};
 
 app.get("/auth", authenticateToken, (req, res) => {
   res.send("Protected route");
@@ -243,12 +246,11 @@ app.post("/review", authenticateToken, (req, res) => {
 });
 
 // Route to get total stars
-app.get('/gettotalstar', authenticateToken, (req, res) => {
+app.get("/gettotalstar", authenticateToken, (req, res) => {
   const reviewer = req.user.name;
-  const sql = `SELECT SUM(stars) AS totalStars ROM review_table WHERE reviewer = ? 
+  console.log(req.user.name)
+  const sql = `SELECT SUM(reviewstar) AS totalStars FROM review_table WHERE reviewer = ? 
     AND review_date >= DATE_SUB(NOW(), INTERVAL 1 MONTH)`;
-
-  console.log(reviewer); // Logging reviewer name for testing/debugging
 
   // Execute SQL query
   db.query(sql, [reviewer], (err, results) => {

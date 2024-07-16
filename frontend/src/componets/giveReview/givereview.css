@@ -39,7 +39,9 @@ span.input-group-text {
     display: block;
     padding: 15px;
     margin-bottom: 15px;
-    background: #f27022;
+    background: #fff;
+    box-shadow: 1px 2px 3px #dedede;
+    border-radius: 10px;
 }
 .card .card-body {
     text-align: center;

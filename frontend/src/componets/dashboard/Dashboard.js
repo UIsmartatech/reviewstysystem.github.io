@@ -5,6 +5,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function DashboardComponent() {
   const [data, setData] = useState(null);
@@ -12,6 +14,8 @@ function DashboardComponent() {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
   const [profileImageUrl, setProfileImageUrl] = useState(null);
+
+  //token variable
   const token = sessionStorage.getItem("token");
     if (token) {
       const decoded = jwtDecode(token);
@@ -35,7 +39,7 @@ function DashboardComponent() {
         if (response.data && response.data.token) {
           setData(response.data.token);
         } else {
-          setMessage("Unauthorized access");
+          setMessage("login succusfull");
         }
       })
       .catch((err) => {
@@ -75,6 +79,7 @@ function DashboardComponent() {
         <div className="welcome-section">
           <div className="wecome-text">
             <h5> Hi, {name}</h5>
+            {data ? <p>Data: {data}</p> : <p>{message}</p>}
             <p>Welcome to the dashboard</p>
           </div>
           <div className="profile-part">

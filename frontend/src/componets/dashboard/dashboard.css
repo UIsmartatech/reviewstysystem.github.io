@@ -19,7 +19,9 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
-    background: radial-gradient(#f27022, #cfcfcf);
+    background: radial-gradient(#f2702200, #ffffff);
+    border: 0px;
+    box-shadow: 1px 2px 4px #dfdfdf;
 }
 .profile-part h3 {
     color: #000;
@@ -130,7 +132,6 @@
   .employ-img {
     position: relative;
     width: 100%;
-    height: 200px; /* Adjust height as needed */
     overflow: hidden; /* Ensure image doesn't overflow */
   }
   

@@ -173,7 +173,7 @@ function ProfileSetting() {
                     as="input"
                     type="button"
                     value="update profile"
-                    className="mt-1 d-block"
+                    className="mt-1 d-block btn-theme"
                     onClick={handleFileUpload}
                   />
                   {message && <p>{message}</p>}
@@ -229,12 +229,12 @@ function ProfileSetting() {
                     onChange={handleInputChange}
                   />
                 </Form.Group>
-                <div className="button-group">
+                <div className="button-group btn-theme">
                   <Button
                     as="input"
                     type="button"
                     value="Update Details"
-                    className="mt-2 d-block"
+                    className="mt-2 .button-group btn-theme d-block"
                     onClick={handleProfile}
                   />
                 </div>

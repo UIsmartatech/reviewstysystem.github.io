@@ -4,7 +4,7 @@ import EmployCard from "../componets/dashboard/EmployCard";
 import IMAGES from "../Assets/profile_img/profile_images";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-import AuthRoute from '../componets/AuthRoute'
+
 
 function Dashboards() {
 

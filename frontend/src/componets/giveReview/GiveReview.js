@@ -26,18 +26,25 @@ const GiveReview = () => {
   const [filterName, setfilterName] = useState([]);
   const [reviewDate, setReviewDate] = useState([]);
   const [records, setRecords] = useState([]);
+  const [givenStar, setgivenStar] = useState([]);
   const [reviewer, setReviewer] = useState("");
 
+  const token = sessionStorage.getItem("token");
 
   useEffect(() => {
-    axios.get("http://localhost:8081/gettotalstar")
+    axios.get("http://localhost:8081/gettotalstar", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
     .then((response)=> {
-      const token = sessionStorage.getItem("token");
+
       const decoded = jwtDecode(token);
       const filtertoken = decoded.name;
       setReviewer(filtertoken);
       const allgivenStar = response.data;
-      console.log("givenallstar:", allgivenStar)
+     const startvalue =  allgivenStar.totalStars;
+     setgivenStar(startvalue);
     })
     .catch((error) => {
       setMessage("Error fetching review user data");
@@ -48,9 +55,8 @@ const GiveReview = () => {
   useEffect(() => {
     axios
       .get("http://localhost:8081/reviewuser")
+      
       .then((response) => {
-        const token = sessionStorage.getItem("token");
-
         const decoded = jwtDecode(token);
         const filtertoken = decoded.name;
         setReviewer(filtertoken);
@@ -125,7 +131,7 @@ const GiveReview = () => {
       setMessageType("error");
       return;
     }
-    const token = sessionStorage.getItem("token");
+
     if (token) {
       const decoded = jwtDecode(token);
       const decodedname = decoded.name;
@@ -144,7 +150,7 @@ const GiveReview = () => {
     axios
       .post("http://localhost:8081/review", reviewData, {
         headers: {
-          Authorization: `bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       })
 
@@ -208,8 +214,8 @@ const GiveReview = () => {
                           {" "}
                           <p>
                             <span className="small"></span>{" "}
-                            <Star className="text-yellow-600" />{" "}
-                            <span className="small">({45} reviews)</span>
+
+                            <span className="small">Recieved stars:<strong> {givenStar}</strong> </span>
                           </p>
                         
                         </div>
