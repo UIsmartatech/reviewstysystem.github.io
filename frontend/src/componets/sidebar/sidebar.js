@@ -6,20 +6,15 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import SmartatechLogo from "../../Assets/profile_img/smartatechlogo.png";
 import "./sidebar.css";
 import { useNavigate } from "react-router-dom";
-<link
-  rel="stylesheet"
-  href="https://fonts.googleapis.com/css?family=Material+Icons+Two+Tone"
-  // Import the two tones MD variant                           ^^^^^^^^
-/>;
 
 const SidebarComponent = () => {
-const navigate = useNavigate();
+  const navigate = useNavigate();
 
-const handleLogout = () => {
-  sessionStorage.removeItem("token");
-  localStorage.removeItem("token");
-  navigate("/login");
-};
+  const handleLogout = () => {
+    sessionStorage.removeItem("token");
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
 
   return (
     <div className="sidebarContainer">
@@ -36,17 +31,17 @@ const handleLogout = () => {
             to="/"
             className={({ isActive }) => (isActive ? "active" : "")}
           >
-            <Icons.Dashboard /> Dashboard
+            <Icons.Dashboard /><span> Dashboard</span>
           </NavLink>
           <NavLink to="/giveReview">
-            <RateReviewIcon /> Give your review
+            <RateReviewIcon /><span> Give your review</span>
           </NavLink>
           <NavLink to="/profileSetting">
-            <Icons.Settings /> Personal profile
+            <Icons.Settings /><span> Personal profile</span>
           </NavLink>
 
           <NavLink to="/login" className="logo-part" onClick={handleLogout}>
-            <Icons.Logout /> Logout
+            <Icons.Logout /> <span>Logout</span>
           </NavLink>
         </nav>
       </div>

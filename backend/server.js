@@ -19,14 +19,22 @@ let otpStore = {}; // To store OTPs temporarily
 const app = express();
 const JWT_SECRET = process.env.JWT_SECRET;
 
+
 // Create the connection to the database
 const db = mysql.createConnection({
-  host: "localhost",  // IP address of your Synology NAS
+  host: "192.168.1.100",  // IP address of your Synology NAS
   user: "root",           // Username to connect to the database
-  password: "", // Password for the database user
+  password: "Smarta@123", // Password for the database user
   database: "test"        // Name of the database
 });
-
+// Connect to the database 
+db.connect((err) => {
+  if (err) {
+    console.error('Database connection error:', err);
+    return;
+  }
+  console.log('Connected to the database.');
+});
 // Multer disk storage configuration
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -248,12 +256,15 @@ app.post("/review", authenticateToken, (req, res) => {
 // Route to get total stars
 app.get("/gettotalstar", authenticateToken, (req, res) => {
   const reviewer = req.user.name;
-  console.log(req.user.name)
-  const sql = `SELECT SUM(reviewstar) AS totalStars FROM review_table WHERE reviewer = ? 
+  const reviewee = reviewer;
+
+  const sql = `SELECT SUM(reviewstar) AS totalStars 
+  FROM review_table 
+  WHERE reviewee = ? 
     AND review_date >= DATE_SUB(NOW(), INTERVAL 1 MONTH)`;
 
   // Execute SQL query
-  db.query(sql, [reviewer], (err, results) => {
+  db.query(sql, [reviewee, reviewer], (err, results) => {
     if (err) {
       console.error('Error executing query:', err);
       return res.status(500).json({ message: 'Error inside the server' });
@@ -263,7 +274,6 @@ app.get("/gettotalstar", authenticateToken, (req, res) => {
     console.log(results[0].totalStars);
   });
 });
-
 
 // Route to fetch user's profile image
 app.get('/profile/image', authenticateToken, (req, res) => {
@@ -291,10 +301,34 @@ app.get('/profile/image', authenticateToken, (req, res) => {
 
 //fething the data fro the admin view
 app.get("/preview_user", (req, res) => {
+  const sql = "SELECT * FROM review_table";
+  db.query(sql, (err, result) => {
+    if (err) return res.json({ message: "error inside thte server" });
+    else return res.json(result);
+  });
+});
+app.get("/employcards", (req, res) => {
   const sql = "SELECT * FROM personal_profile";
   db.query(sql, (err, result) => {
     if (err) return res.json({ message: "error inside thte server" });
     else return res.json(result);
+  });
+});
+
+app.get("/profilepagedata", authenticateToken, (req, res) => {
+  const username = req.user.name;
+
+  const sql = "SELECT * FROM personal_profile WHERE username = ?";
+
+  db.query(sql,[username], (err, result) => {
+    if (err) {
+      console.error('Error executing query:', err);
+      return res.status(500).json({ message: 'Error inside the server' });
+    }
+    if (result.length === 0) {
+      return res.status(404).json({ message: 'No records found' });
+    }
+    return res.json(result);
   });
 });
 
@@ -310,17 +344,26 @@ app.get("/reviewuser", (req, res) => {
 app.post("/personal-profile-insert", async (req, res) => {
   const { name, email, mobile, designation, joinDate } = req.body;
 
-  const query =
-    "INSERT INTO personal_profile (username, email, designation, mobile_no, join_date) VALUES (?, ?, ?, ?, ?)";
-  db.query(
-    query,
-    [name, email, mobile, designation, joinDate],
-    (err, result) => {
+  // Check if the record already exists
+  const checkQuery = "SELECT * FROM personal_profile WHERE username = ? OR email = ? OR mobile_no = ?";
+  db.query(checkQuery, [name, email, mobile], (err, results) => {
+    if (err) {
+      console.error("Error checking profile:", err);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+
+    if (results.length > 0) {
+      return res.status(409).json({ error: "Profile already exists" });
+    }
+
+    // Insert the new profile if no duplicate is found
+    const query = "INSERT INTO personal_profile (username, email, designation, mobile_no, join_date) VALUES (?, ?, ?, ?, ?)";
+    db.query(query, [name, email, designation, mobile, joinDate], (err, result) => {
       if (err) {
         console.error("Error inserting profile:", err);
-        res.status(500).json({ error: "Internal Server Error" });
+        return res.status(500).json({ error: "Internal Server Error" });
       } else {
-        res.status(201).json({
+        return res.status(201).json({
           status: "success",
           id: result.insertId,
           name,
@@ -330,8 +373,8 @@ app.post("/personal-profile-insert", async (req, res) => {
           joinDate,
         });
       }
-    }
-  );
+    });
+  });
 });
 
 

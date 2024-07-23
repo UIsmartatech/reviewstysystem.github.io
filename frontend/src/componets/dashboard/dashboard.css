@@ -140,3 +140,20 @@
     height: 100%;
     object-fit: cover; /* Maintain image aspect ratio */
   }
+
+  @media (max-width: 768px) {
+    .loginContainer {
+        width: 100%;
+        max-width: 100%;
+    }
+    .login {
+        width: 100%;
+        margin: 0px;
+        padding: 10px;
+        font-size: 16px;
+    }
+    .login-container {
+        /* padding: 01px; */
+        margin: 15px;
+    }
+  }

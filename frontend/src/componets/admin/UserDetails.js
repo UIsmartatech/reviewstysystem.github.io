@@ -54,7 +54,7 @@ const formatDate = (timestamp) => {
         {Array.isArray(records) && records.length > 0 ? (
             records.map(record => (
               <tr key={record.id}>
-                <td>{record.Employ_id}</td>
+                <td>{record.id}</td>
                 <td>{record.reviewee}</td>
                 <td>{record.reviewer}</td>
                 <td>{record.comment}</td>

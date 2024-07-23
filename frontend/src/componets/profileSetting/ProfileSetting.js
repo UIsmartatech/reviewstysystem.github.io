@@ -20,10 +20,13 @@ function ProfileSetting() {
   const [joinDate, setJoinDate] = useState("");
   const [profileImageUrl, setProfileImageUrl] = useState(null);
   const [message, setMessage] = useState("");
+  const [users, setUsers] = useState([""]);
+    const token = sessionStorage.getItem("token");
 
   const handleInputChange = (event) => {
+    
     const { name, value } = event.target;
-    if (name === "name") {
+    if (name === "username") {
       setName(value);
     } else if (name === "email") {
       setEmail(value);
@@ -43,7 +46,8 @@ function ProfileSetting() {
     setImage(event.target.files[0]);
   };
 
-  const handleFileUpload = () => {
+  const handleFileUpload = (event) => {
+    event.preventDefault();
     const token = sessionStorage.getItem("token");
     if (token) {
       const decoded = jwtDecode(token);
@@ -84,11 +88,18 @@ function ProfileSetting() {
       .post("http://localhost:8081/personal-profile-insert", profileData)
       .then((res) => {
         if (res.data.Status === "success") {
-          console.log("succeed");
+          setMessage(`Profile added successfully`);
           setMessage("successfull attempt");
         } else {
           console.log("failed");
           setMessage("unsuccessfull attempt");
+        }
+      })
+      .catch(err => {
+        if (err.response && err.response.status === 409) {
+          setMessage('Profile already exists');
+        } else {
+          setMessage('Error adding profile');
         }
       });
   };
@@ -119,7 +130,19 @@ function ProfileSetting() {
         console.error("Error fetching profile image:", error);
       });
   };
-  
+  useEffect(() => {
+    axios
+      .get("http://localhost:8081/profilepagedata", {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        const userdata = response.data;
+        setUsers(userdata);
+        console.log(userdata);
+      });
+    }, []);
 
   return (
     <>
@@ -127,6 +150,7 @@ function ProfileSetting() {
         <div className="sidebar">
           <SidebarComponent />
         </div>
+        {users && (
         <div className="mainContent">
           <div className="welcome-section">
             <div className="wecome-text">
@@ -142,6 +166,7 @@ function ProfileSetting() {
             </div>
           </div>
           <div className=" employ-detail-panel">
+          {users.map((user) => (
             <Card>
               <div className="profile-upload-panel">
                 <div className="employ-img-edit" onClick={handleImgClick}>
@@ -167,8 +192,7 @@ function ProfileSetting() {
                       className="d-none"
                     />
                   </div>
-                </div>
-                <div className="button-group">
+                  <div className="button-group">
                   <Button
                     as="input"
                     type="button"
@@ -178,15 +202,17 @@ function ProfileSetting() {
                   />
                   {message && <p>{message}</p>}
                 </div>
+                </div>
+
               </div>
               <Form className="profile-container">
                 <Form.Group className="mb-3" controlId="formName">
                   <Form.Label>Your Name</Form.Label>
                   <Form.Control
                     type="text"
-                    name="name"
+                    name="username"
                     placeholder="Your full name"
-                    value={name}
+                    value={users.username}
                     onChange={handleInputChange}
                   />
                 </Form.Group>
@@ -239,9 +265,12 @@ function ProfileSetting() {
                   />
                 </div>
               </Form>
+              {message && <p>{message}</p>}
             </Card>
+           ))}
           </div>
         </div>
+        )}
       </div>
     </>
   );

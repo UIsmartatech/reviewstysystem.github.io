@@ -126,3 +126,18 @@ nav a {
     background-position: 100% 0;
     padding-left: 10px;
   }
+  @media (max-width: 768px) {
+    .sidebarContainer {
+      width: 100%;
+      height: auto;
+      position: relative;
+    }
+    .sidenav nav a {
+      text-align: center;
+      padding: 15px;
+    }
+    .sidenav a span {
+        display: none;
+    }
+  }
+  

@@ -29,6 +29,7 @@ const GiveReview = () => {
   const [givenStar, setgivenStar] = useState([]);
   const [reviewer, setReviewer] = useState("");
 
+
   const token = sessionStorage.getItem("token");
 
   useEffect(() => {
@@ -43,6 +44,7 @@ const GiveReview = () => {
       const filtertoken = decoded.name;
       setReviewer(filtertoken);
       const allgivenStar = response.data;
+      console.log("givenstar", allgivenStar);
      const startvalue =  allgivenStar.totalStars;
      setgivenStar(startvalue);
     })
@@ -51,6 +53,8 @@ const GiveReview = () => {
       console.error("Error fetching data:", error);
     });
   })
+
+
 
   useEffect(() => {
     axios
@@ -103,17 +107,17 @@ const GiveReview = () => {
       });
   };
 
-  const criteria = ["Performance", "Ability", "Caring", "Lovely"]; // List of criteria
+  const criteria = ["Performance", "Punctuality", "Proactive", "PR support"]; // List of criteria
   const totalStars = Object.values(rating).reduce(
     (total, rating) => total + (rating || 0),
     0
   );
-  const handleRatingChange = (criterion, rating) => {
-    setRating((prevRatings) => ({
-      ...prevRatings,
-      [criterion]: rating,
-    }));
-  };
+  // const handleRatingChange = (criterion, rating) => {
+  //   setRating((prevRatings) => ({
+  //     ...prevRatings,
+  //     [criterion]: rating,
+  //   }));
+  // };
 
   const handleRadioChange = (event) => {
     setreviewee(event.target.value);
@@ -214,7 +218,6 @@ const GiveReview = () => {
                           {" "}
                           <p>
                             <span className="small"></span>{" "}
-
                             <span className="small">Recieved stars:<strong> {givenStar}</strong> </span>
                           </p>
                         
@@ -271,19 +274,14 @@ const GiveReview = () => {
                 <InputGroup className="m-3">
                   <div className="star-icons-panel d-flex">
                     <div className="star-icons">
-                      {criteria.map((criterion) => (
-                        <ReviewStar
-                          key={criterion}
-                          criterion={criterion}
-                          onRatingChange={handleRatingChange}
-                        />
-                      ))}
+                      <ReviewStar/>
+                 
                     </div>
-                    <div className="criteria">
+                    {/* <div className="criteria">
                       {criteria.map((criterion) => (
                         <p key={criterion}>{criterion}</p>
                       ))}
-                    </div>
+                    </div> */}
                     <input
                       name="totalStar"
                       className="d-none"

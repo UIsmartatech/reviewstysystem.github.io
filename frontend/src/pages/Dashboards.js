@@ -19,14 +19,14 @@ function Dashboards() {
   }
   useEffect(() => {
     axios
-      .get("http://localhost:8081/preview_user", {
+      .get("http://localhost:8081/employcards", {
         headers: {
           authorization: `Bearer ${token}`,
         },
       })
       .then((response) => {
         const userdata = response.data;
-        const image = response.data.imageUrl;
+        const image = response.data;
         setProfileImageUrl(image);
         setUsers(userdata);
         console.log(users);

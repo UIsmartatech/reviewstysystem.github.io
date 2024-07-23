@@ -46,7 +46,6 @@ function DashboardComponent() {
         setMessage("Unauthorized access");
       });
   }, []);
-
   useEffect(() => {
     fetchProfileImage();
   }, []);
@@ -79,7 +78,7 @@ function DashboardComponent() {
         <div className="welcome-section">
           <div className="wecome-text">
             <h5> Hi, {name}</h5>
-            {data ? <p>Data: {data}</p> : <p>{message}</p>}
+            {/* {data ? <p>Data: {data}</p> : <p>{message}</p>} */}
             <p>Welcome to the dashboard</p>
           </div>
           <div className="profile-part">
