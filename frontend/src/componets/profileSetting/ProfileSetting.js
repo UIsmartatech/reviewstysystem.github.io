@@ -1,8 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import SidebarComponent from "../sidebar/sidebar";
 import Card from "react-bootstrap/Card";
-import * as Icons from "@mui/icons-material";
-import IMAGES from "../../Assets/profile_img/profile_images";
 import "./profileSetting.css";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
@@ -21,7 +19,7 @@ function ProfileSetting() {
   const [profileImageUrl, setProfileImageUrl] = useState(null);
   const [message, setMessage] = useState("");
   const [users, setUsers] = useState([""]);
-    const token = sessionStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
 
   const handleInputChange = (event) => {
     
@@ -212,8 +210,8 @@ function ProfileSetting() {
                     type="text"
                     name="username"
                     placeholder="Your full name"
-                    value={users.username}
-                    onChange={handleInputChange}
+                    value={user.username}
+                    onChange={handleInputChange} disabled
                   />
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="formEmail">
@@ -222,8 +220,9 @@ function ProfileSetting() {
                     type="email"
                     name="email"
                     placeholder="name@example.com"
-                    value={email}
+                    value={user.email}
                     onChange={handleInputChange}
+                    disabled
                   />
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="formMobile">
@@ -232,8 +231,9 @@ function ProfileSetting() {
                     type="text"
                     name="mobile"
                     placeholder="+91 0000 00 0000"
-                    value={mobile}
+                    value={user.mobile_no}
                     onChange={handleInputChange}
+                    disabled
                   />
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="formDesignation">
@@ -242,27 +242,29 @@ function ProfileSetting() {
                     type="text"
                     name="designation"
                     placeholder="Please enter designation"
-                    value={designation}
+                    value={user.designation}
                     onChange={handleInputChange}
+                    disabled
                   />
                 </Form.Group>
-                <Form.Group className="mb-3" controlId="formJoinDate">
+                 <Form.Group className="mb-3" controlId="formJoinDate">
                   <Form.Label>Join date</Form.Label>
                   <Form.Control
-                    type="date"
+                    type="text"
                     name="joinDate"
-                    value={joinDate}
+                    value={user.join_date}
                     onChange={handleInputChange}
+                    disabled
                   />
                 </Form.Group>
                 <div className="button-group btn-theme">
-                  <Button
+                  {/* <Button
                     as="input"
                     type="button"
                     value="Update Details"
                     className="mt-2 .button-group btn-theme d-block"
                     onClick={handleProfile}
-                  />
+                  /> */}
                 </div>
               </Form>
               {message && <p>{message}</p>}

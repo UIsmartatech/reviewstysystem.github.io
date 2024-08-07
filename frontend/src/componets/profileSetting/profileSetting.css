@@ -9,16 +9,7 @@ label.form-label {
     margin-top: 10px;
     text-align: center;
 }
-.button-group .btn-theme {
-    background: #f27022;
-    height: 44px;
-    font-family: 'poppins-regular';
-    font-size: 16px;
-    display: inline-block;
-    /* align-items: center; */
-    text-align: center;
-    margin: auto;
-}
+
 form.profile-container {
     padding: 20px;
     max-width: 80%;
@@ -59,3 +50,9 @@ form.profile-container {
     border-radius: 10px;
     margin: 15px;
 }
+input[disabled] {
+    background-color: #f0f0f0;
+    border: none;
+    cursor: not-allowed;
+    color: #666;
+  }

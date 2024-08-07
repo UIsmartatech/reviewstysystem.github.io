@@ -6,79 +6,112 @@ import "./givereview.css";
 import ProgressBar from "react-bootstrap/ProgressBar";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-import ReviewStar from "./reviewStar";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 
-
 const GiveReview = () => {
   const [review, setReview] = useState("");
   const [profileImageUrl, setProfileImageUrl] = useState(null);
   const [name, setName] = useState("");
+  const [punctuality, setpunctuality] = useState("");
+  const [proactive, setproactive] = useState("");
+  const [support, setsupport] = useState("");
+  const [performance, setperformance] = useState("");
   const [rating, setRating] = useState({});
   const [message, setMessage] = useState("");
   const [reviewee, setreviewee] = useState("");
   const [comment, setComment] = useState("");
   const [reviewstar, setreviewStar] = useState(0);
   const [messageType, setMessageType] = useState("");
-  const [filterName, setfilterName] = useState([]);
-  const [reviewDate, setReviewDate] = useState([]);
   const [records, setRecords] = useState([]);
   const [givenStar, setgivenStar] = useState([]);
   const [reviewer, setReviewer] = useState("");
-
-
+  const [ratings, setRatings] = useState({
+    punctuality: 0,
+    proactive: 0,
+    support: 0,
+    performance: 0,
+  });
+  const categories = [
+    "punctuality",
+    "proactive",
+    "support",
+    "performance",
+    // "Teamwork and Collaboration",
+  ]; // Define your categories
   const token = sessionStorage.getItem("token");
 
+  // Function to handle star click
+  const handleStarClick = (event, category) => {
+    const ratingValue = parseInt(event.target.value);
+    setRatings((prevRatings) => ({
+      ...prevRatings,
+      [category]: ratingValue,
+    }));
+    console.log(`${category} rating: ${ratingValue} performance stars`);
+    saveRatingToDatabase(category, ratingValue);
+  };
+
+  // Simulate saving to a database
+  const saveRatingToDatabase = (category, ratingValue) => {
+    // Here you would normally make an API call to save the rating
+    console.log(`Rating ${ratingValue} for ${category} saved to the database`);
+  };
+
   useEffect(() => {
-    axios.get("http://localhost:8081/gettotalstar", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-    .then((response)=> {
-
-      const decoded = jwtDecode(token);
-      const filtertoken = decoded.name;
-      setReviewer(filtertoken);
-      const allgivenStar = response.data;
-      console.log("givenstar", allgivenStar);
-     const startvalue =  allgivenStar.totalStars;
-     setgivenStar(startvalue);
-    })
-    .catch((error) => {
-      setMessage("Error fetching review user data");
-      console.error("Error fetching data:", error);
-    });
-  })
-
-
+    axios
+      .get("http://localhost:8081/gettotalstar", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        const decoded = jwtDecode(token);
+        const filtertoken = decoded.name;
+        setReviewer(filtertoken);
+        const allgivenStar = response.data;
+        console.log("givenstar", allgivenStar);
+        const startvalue = allgivenStar.totalStars;
+        const punctuality = allgivenStar.totalProactiveStars;
+        const proactive = allgivenStar.totalProactiveStars;
+        const support = allgivenStar.totalpeersupportStars;
+        const performance = allgivenStar.totalperformanceStars;
+        setgivenStar(startvalue);
+        setpunctuality(punctuality);
+        setproactive(proactive);
+        setsupport(support);
+        setperformance(performance);
+      })
+      .catch((error) => {
+        setMessage("Error fetching review user data");
+        console.error("Error fetching data:", error);
+      });
+  });
 
   useEffect(() => {
     axios
       .get("http://localhost:8081/reviewuser")
-      
+
       .then((response) => {
         const decoded = jwtDecode(token);
         const filtertoken = decoded.name;
         setReviewer(filtertoken);
 
-        console.log("here is the reviewer:", filtertoken);
+        // console.log("here is the reviewer:", filtertoken);
 
         const filteredResult = response.data.filter(
           (r) => r.role !== 0 && r.name !== filtertoken
         );
         setRecords(filteredResult);
-        console.log(records);
+        // console.log(records);
       })
       .catch((error) => {
         setMessage("Error fetching review user data");
         console.error("Error fetching data:", error);
       });
   }, []); // Empty dependency array to run once on mount
-
 
   useEffect(() => {
     fetchProfileImage();
@@ -107,9 +140,8 @@ const GiveReview = () => {
       });
   };
 
-  const criteria = ["Performance", "Punctuality", "Proactive", "PR support"]; // List of criteria
-  const totalStars = Object.values(rating).reduce(
-    (total, rating) => total + (rating || 0),
+  const totalStars = Object.values(ratings).reduce(
+    (total, ratings) => total + (ratings || 0),
     0
   );
   // const handleRatingChange = (criterion, rating) => {
@@ -123,14 +155,10 @@ const GiveReview = () => {
     setreviewee(event.target.value);
   };
 
-  const Performance =  Object.values(rating);
-  console.log(Performance);
-
-  const handleSubmit = (event) => {
+  const handleSubmit = (event, category, ratingValue) => {
     event.preventDefault();
-
     // Validate fields
-    if (!reviewee || !totalStars || !comment) {
+    if (!reviewee || !totalStars || !comment || !ratings) {
       setMessage("All fields are required.");
       setMessageType("error");
       return;
@@ -140,7 +168,7 @@ const GiveReview = () => {
       const decoded = jwtDecode(token);
       const decodedname = decoded.name;
       setReviewer(decodedname);
-      console.log("here is the reviewer:", decodedname);
+      // console.log("here is the reviewer:", decodedname);
     } else {
       console.error("no token found");
     }
@@ -149,8 +177,9 @@ const GiveReview = () => {
       reviewee: reviewee,
       comment: comment,
       totalStars: totalStars,
+      ratings: ratings, // Include individual category ratings
     };
-
+console.log(reviewData);
     axios
       .post("http://localhost:8081/review", reviewData, {
         headers: {
@@ -165,6 +194,12 @@ const GiveReview = () => {
         setreviewee("");
         setComment("");
         setreviewStar(0);
+        setRatings({
+          punctuality: 0,
+          proactive: 0,
+          support: 0,
+          performance: 0,
+        });
       })
       .catch((error) => {
         setMessage("You can only review this employee  per month once only.");
@@ -185,7 +220,6 @@ const GiveReview = () => {
               <div className="wecome-text">
                 <h5> Please write your review </h5>
               </div>
-              <div className="profile-part">
                 <div className="profile-part">
                   <p>{name}</p>
                   <img
@@ -194,7 +228,6 @@ const GiveReview = () => {
                     alt="Profile"
                   />
                 </div>
-              </div>
             </div>
 
             <div className="all-card-section">
@@ -218,24 +251,49 @@ const GiveReview = () => {
                           {" "}
                           <p>
                             <span className="small"></span>{" "}
-                            <span className="small">Recieved stars:<strong> {givenStar}</strong> </span>
+                            <span className="small">
+                              Recieved stars:<strong> {givenStar}</strong>{" "}
+                            </span>
                           </p>
-                        
                         </div>
                       </div>
                     </div>
                   </div>
                   <div className="col-sm-6">
-                    {/* <div className="progressbar">
+                    <div className="progressbar">
                       <div className="d-flex align-items-center justify-content-center">
                         {" "}
-                        <span> 5 Star</span>
-                        <ProgressBar variant="warning" now={40} />{" "}
+                        <span> Punctuality</span>
+                        <ProgressBar variant="warning" now={punctuality} />{" "}
                         <a href="">
-                          <span>5 reviews</span>
+                          <span>{punctuality} reviews</span>
                         </a>{" "}
                       </div>
-                    </div> */}
+                      <div className="d-flex align-items-center justify-content-center">
+                        {" "}
+                        <span>Proactive</span>
+                        <ProgressBar variant="warning" now={proactive} />{" "}
+                        <a href="">
+                          <span>{proactive} reviews</span>
+                        </a>{" "}
+                      </div>
+                      <div className="d-flex align-items-center justify-content-center">
+                        {" "}
+                        <span> Peer support</span>
+                        <ProgressBar variant="warning" now={support} />{" "}
+                        <a href="">
+                          <span>{support} reviews</span>
+                        </a>{" "}
+                      </div>
+                      <div className="d-flex align-items-center justify-content-center">
+                        {" "}
+                        <span>Performance</span>
+                        <ProgressBar variant="warning" now={performance} />{" "}
+                        <a href="">
+                          <span>{performance} reviews</span>
+                        </a>{" "}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -274,8 +332,48 @@ const GiveReview = () => {
                 <InputGroup className="m-3">
                   <div className="star-icons-panel d-flex">
                     <div className="star-icons">
-                      <ReviewStar/>
-                 
+                      <div>
+                        {categories.map((category) => (
+                          <div key={category} className="star-panel">
+                            <p>
+                              {category.charAt(0).toUpperCase() +
+                                category.slice(1)}
+                            </p>
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "row",
+                                justifyContent: "left",
+                              }}
+                            >
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <label
+                                  key={star}
+                                  style={{
+                                    cursor: "pointer",
+                                    fontSize: "1.5rem",
+                                    color:
+                                      star <= ratings[category]
+                                        ? "gold"
+                                        : "gray",
+                                  }}
+                                >
+                                  <input
+                                    type="radio"
+                                    name={`${category}-rating`}
+                                    value={star}
+                                    style={{ display: "none" }}
+                                    onChange={(e) =>
+                                      handleStarClick(e, category)
+                                    }
+                                  />
+                                  <Star />
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                     {/* <div className="criteria">
                       {criteria.map((criterion) => (
@@ -317,7 +415,7 @@ const GiveReview = () => {
                   as="input"
                   type="submit"
                   value="Sumbit"
-                  className="my-3"
+                  className="mt-3  btn-theme"
                 />{" "}
                 {message && (
                   <p

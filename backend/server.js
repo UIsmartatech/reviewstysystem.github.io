@@ -22,7 +22,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 // Create the connection to the database
 const db = mysql.createConnection({
-  host: "192.168.1.100",  // IP address of your Synology NAS
+  host: "192.168.1.133",  // IP address of your Synology NAS
   user: "root",           // Username to connect to the database
   password: "Smarta@123", // Password for the database user
   database: "test"        // Name of the database
@@ -58,6 +58,18 @@ app.use(
     credentials: true,
   })
 );
+// Middleware to handle CORS
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  if (req.method === 'OPTIONS') {
+      res.sendStatus(200);
+  } else {
+      next();
+  }
+});
+
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
 app.use(
@@ -167,7 +179,7 @@ app.post("/verify-otp", (req, res) => {
       const token = jwt.sign(
         { email, role: user.role, name: user.name },
           process.env.JWT_SECRET,
-        { expiresIn: "1h" }
+        { expiresIn: '30m' }
       );
 
       // Send the token in a cookie
@@ -187,7 +199,17 @@ app.post("/verify-otp", (req, res) => {
 
 
 app.get("/auth", authenticateToken, (req, res) => {
-  res.send("Protected route");
+  const token = req.headers['authorization'];
+  if (!token) {
+    return res.status(401).send('Access denied');
+  }
+
+  try {
+    const decoded = jwt.verify(token,  JWT_SECRET);
+    res.json({ message: 'This is a protected route', user: decoded });
+  } catch (err) {
+    res.status(400).send('Invalid token');
+  }
 });
 
 // Route to logout
@@ -230,26 +252,34 @@ app.post('/upload', authenticateToken, upload.single('image'), (req, res) => {
   });
 });
 
-app.post("/review", authenticateToken, (req, res) => {
+
+app.post('/review', authenticateToken, (req, res) => {
   const reviewer = req.user.name;
-  const { reviewee, totalStars, comment } = req.body;
+  const { reviewee, totalStars, comment, ratings } = req.body; // ratings contains category-specific stars
 
   const checkReviewQuery = `
     SELECT * FROM review_table
     WHERE reviewer = ? AND reviewee = ? AND review_date >= DATE_SUB(NOW(), INTERVAL 1 MONTH)`;
-    
+
   db.query(checkReviewQuery, [reviewer, reviewee], (err, result) => {
     if (err) return res.status(500).send(err);
     if (result.length > 0) {
       return res.status(400).send('You can only review this user once per month.');
     }
 
-    const addReviewQuery = 'INSERT INTO review_table (reviewee, reviewer, reviewstar, comment, review_date) VALUES (?, ?, ?, ?, NOW())';
-    db.query(addReviewQuery, [reviewee, reviewer, totalStars, comment], (err, results) => {
-      if (err) return res.status(500).send(err);
+    const addReviewQuery = `
+      INSERT INTO review_table (reviewee, reviewer, reviewstar, comment, review_date, punctuality, proactive, pr_support, performance)
+      VALUES (?, ?, ?, ?, NOW(), ?, ?, ?, ?)`;
 
-      res.status(200).send('Review added successfully.');
-    });
+    db.query(
+      addReviewQuery,
+      [reviewee, reviewer, totalStars, comment, ratings.punctuality, ratings.proactive, ratings.pr_support, ratings.performance],
+      (err, results) => {
+        if (err) return res.status(500).send(err);
+
+        res.status(200).send('Review added successfully.');
+      }
+    );
   });
 });
 
@@ -258,7 +288,7 @@ app.get("/gettotalstar", authenticateToken, (req, res) => {
   const reviewer = req.user.name;
   const reviewee = reviewer;
 
-  const sql = `SELECT SUM(reviewstar) AS totalStars 
+  const sql = `SELECT SUM(reviewstar) AS totalStars, SUM(punctuality) AS totalPunctualityStars,  SUM(proactive) AS totalProactiveStars,  SUM(pr_support) AS totalpeersupportStars, SUM(performance) AS totalperformanceStars
   FROM review_table 
   WHERE reviewee = ? 
     AND review_date >= DATE_SUB(NOW(), INTERVAL 1 MONTH)`;
@@ -270,8 +300,17 @@ app.get("/gettotalstar", authenticateToken, (req, res) => {
       return res.status(500).json({ message: 'Error inside the server' });
     }
     // Assuming results[0].totalStars contains the total stars sum
-    return res.json({ totalStars: results[0].totalStars });
+    return res.json({
+      totalStars: results[0].totalStars,
+      totalPunctualityStars: results[0].totalPunctualityStars,
+      totalProactiveStars: results[0].totalProactiveStars,
+      totalpeersupportStars: results[0].totalpeersupportStars,
+      totalperformanceStars: results[0].totalperformanceStars
+  });
+    
     console.log(results[0].totalStars);
+    console.log( results[0].totalPunctualityStars);
+    console.log(results[0].totalProactiveStars);
   });
 });
 
@@ -315,8 +354,26 @@ app.get("/employcards", (req, res) => {
   });
 });
 
+app.get('/filtertab', authenticateToken, (req, res) => {
+  const username = req.user.name;
+  const selectName =  req.body;
+
+  console.log(selectName);
+  const sql = "SELECT * FROM review_table WHERE reviewee = ?"
+  db.query(sql,[selectName], [username], (err, rows) => {
+    if (err) {
+      res.status(400).json({"error": err.message});
+      return;
+    }
+    res.json({
+      "message": "success",
+      "data": rows
+    });
+  });
+});
 app.get("/profilepagedata", authenticateToken, (req, res) => {
   const username = req.user.name;
+
 
   const sql = "SELECT * FROM personal_profile WHERE username = ?";
 
@@ -379,5 +436,5 @@ app.post("/personal-profile-insert", async (req, res) => {
 
 
 app.listen(port ,hostname , () => {
-  console.log('listening at');
+  console.log(`Example app listening at http://localhost:${port}`);
 });

@@ -3,8 +3,16 @@ import { Outlet, Link } from 'react-router-dom';
 
 const Layout = () => (
   <div>
+  <header>
+    {/* Your header content */}
+  </header>
+  <main>
     <Outlet />
-  </div>
+  </main>
+  <footer>
+    {/* Your footer content */}
+  </footer>
+</div>
 );
 
 export default Layout;

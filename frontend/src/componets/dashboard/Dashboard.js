@@ -32,7 +32,7 @@ function DashboardComponent() {
     }
 
     axios
-      .get("http://localhost:8081", {
+      .get("https://localhost:8081", {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {

@@ -1,6 +1,6 @@
 
 import './App.css';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import LoginComponent from './componets/login/LoginComponent';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import DashboardComponent from "./componets/dashboard/Dashboard";
@@ -10,12 +10,13 @@ import ProfileSetting from './componets/profileSetting/ProfileSetting';
 import SignupComponent from './componets/login/SignupComponent';
 import verifyOTP from './componets/login/OTPVerifier';
 import AdminComponent from './componets/admin/AdminComponent';
-import UserDetails from './componets/admin/UserDetails';
+
  import AuthRoute from './componets/AuthRoute';
  import Layout from './Layout.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const App = () => {
+  const [loggedIn, setLoggedIn] = useState(false);
  
   return (
     <>
