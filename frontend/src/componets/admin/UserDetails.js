@@ -1,97 +1,77 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import "./user_details.css";
-import { Form, FormControl } from 'react-bootstrap';
+import axios from 'axios';
+import './user_details.css'
+import EditIcon from '@mui/icons-material/Edit';
+import Button from 'react-bootstrap/Button';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import DeleteIcon from '@mui/icons-material/Delete';
+
 
 function UserDetails() {
-  const [records, setRecords] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [error, setError] = useState(null);
-
-  const token = sessionStorage.getItem("token");
+  const[records, setRecords]= useState('');
+  const[message, setMessage]= useState();
 
   useEffect(() => {
-    axios
-      .get("http://localhost:8081/preview_user", {
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-      })
-      .then((response) => {
-        if (Array.isArray(response.data)) {
-          setRecords(response.data);
-        } else {
-          console.error("Response data is not an array:", response.data);
-        }
-      })
-      .catch((error) => {
-        setError(error);
-        console.error("Error fetching data:", error);
-      });
-  }, [token]);
+    axios.get('http://localhost:8081/preview_user')
+    .then(response => {
+      console.log('Response data:', response.data);
+      // Filter data where status is not zero
+      if (Array.isArray(response.data)) {
+        // Filter data where status is not zero
+        const filteredResult = response.data.filter(record => record.status !== 0);
+        setRecords(filteredResult);
+      } else {
+        console.error('Response data is not an array:', response.data);
+      }
+    })
+    .catch(error => {
+      setMessage(error);
+      console.error('Error fetching data:', error);
+    });
+}, []);
 
-  const formatDate = (timestamp) => {
-    const date = new Date(timestamp);
-    return date.toLocaleString(); // Converts to local date and time string
-  };
-
-  const handleSearch = (query) => {
-    setSearchQuery(query);
-  };
-
-  const filteredRecords = records.filter((record) =>
-    record.reviewee.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
+const formatDate = (timestamp) => {
+  const date = new Date(timestamp);
+  return date.toLocaleString(); // Converts to local date and time string
+};
   return (
-    <div className="container-fluid ">
-      <Form className="mb-4">
-        <h4>Please search by name</h4>
-        <FormControl
-          type="text"
-          value={searchQuery}
-          onChange={(e) => handleSearch(e.target.value)}
-          placeholder="Search by reviewee"
-          className="mr-sm-2 mb-2"
-        />
-      </Form>
-      {error && <p style={{ color: "red" }}>Error: {error.message}</p>}
+    <div>
       <table className="table table-responsive userdetails">
         <thead>
           <tr>
             <th scope="col">Serial no</th>
             <th scope="col">Reviewee</th>
             <th scope="col">Reviewer</th>
-            <th scope="col">Punctuality</th>
-            <th scope="col">Proactive</th>
-            <th scope="col">Support</th>
-            <th scope="col">Performance</th>
             <th scope="col">Comments</th>
-            <th scope="col">Total Star</th>
+            <th scope="col">Reivews</th>
             <th scope="col">Date/Time</th>
+            <th scope="col">Action</th>
+
           </tr>
         </thead>
         <tbody>
-          {Array.isArray(filteredRecords) && filteredRecords.length > 0 ? (
-            filteredRecords.map((record) => (
+        {Array.isArray(records) && records.length > 0 ? (
+            records.map(record => (
               <tr key={record.id}>
-                <td>{record.id}</td>
+                <td>{record.Employ_id}</td>
                 <td>{record.reviewee}</td>
                 <td>{record.reviewer}</td>
-                <td>{record.punctuality}</td>
-                <td>{record.proactive}</td>
-                <td>{record.pr_support}</td>
-                <td>{record.performance}</td>
                 <td>{record.comment}</td>
                 <td>{record.reviewstar}</td>
-                <td>{formatDate(record.review_date)}</td>
+                <td>{formatDate (record.review_date)}</td>
+                <td>
+                <ButtonGroup aria-label="Basic example">
+                  <Button variant="secondary" title="edit"> <EditIcon/></Button>
+                  <Button variant="secondary" title="hide"><VisibilityIcon/></Button>
+                  <Button variant="secondary" title="Delete"><DeleteIcon/></Button>
+                </ButtonGroup>
+                </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="10" className="text-center">
-                No records found
-              </td>
+              <td colSpan="3">No records available</td>
             </tr>
           )}
         </tbody>
@@ -99,5 +79,4 @@ function UserDetails() {
     </div>
   );
 }
-
 export default UserDetails;

@@ -50,25 +50,3 @@ p {
   font-size: 16px;
   font-family: 'poppins-regular';
 }
-.form-check-input {
-  border: var(--bs-border-width) solid #7fa8d2 !important;
-  -webkit-print-color-adjust: exact;
-  print-color-adjust: exact;
-}
-h4, h2, h3, h1, h5, h6 {
-  font-family: 'poppins-semibold';
-}
-input{
-  font-family: 'poppins-regular' !important;
-  font-size: 10px;
-}
- .btn-theme {
-  background: #f27022;
-  height: 44px;
-  font-family: 'poppins-regular';
-  font-size: 16px;
-  display: inline-block;
-  /* align-items: center; */
-  text-align: center;
-  margin: auto;
-}

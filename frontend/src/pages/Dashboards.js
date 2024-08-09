@@ -1,95 +1,97 @@
-import React, { useState, useEffect } from "react";
-import "../componets/dashboard/dashboard.css";
+import React, { useState } from 'react';
+import '../componets/dashboard/dashboard.css';
 import EmployCard from "../componets/dashboard/EmployCard";
-import IMAGES from "../Assets/profile_img/profile_images";
-import axios from "axios";
-import { jwtDecode } from "jwt-decode";
+import IMAGES from '../Assets/profile_img/profile_images';
 
 
-function Dashboards() {
-  const [users, setUsers] = useState([]);
-  const [loginUser, setLoginUser] = useState("");
-  const [profileImageUrl, setProfileImageUrl] = useState(null);
-  const token = sessionStorage.getItem("token");
 
-  useEffect(() => {
-    if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        console.log("decode token:", decoded);
-        setLoginUser(decoded.name); // Assuming 'name' is the username in the token
-      } catch (error) {
-        console.error("Failed to decode token:", error);
-      }
-    } else {
-      console.error("No token found");
-    }
-  }, [token]);
+function Dashboards() { 
+  const [employees, setEmployees] = useState([
+    {
+      id: 1,
+      name: "Rajesh",
+      designation: "Backend developer",
+      img: IMAGES.RajeshImg,
+    },
+    {
+      id: 2,
+      name: "Nagababu",
+      designation: "Frontend developer",
+      img: IMAGES.NagababuImg,
+    },
+    {
+      id: 3,
+      name: "Pooja",
+      designation: "Backend developer",
+      img: IMAGES.PoojaImg,
+    },
+    {
+      id: 4,
+      name: "Vishal",
+      designation: "Frontend developer",
+      img: IMAGES.VishalImg,
+    },
+    {
+      id: 5,
+      name: "Shubhi",
+      designation: "UI developer",
+      img: IMAGES.ShubhiImg,
+    },
+    {
+      id: 6,
+      name: "Vidhya",
+      designation: "Data Entry Operator",
+      img: IMAGES.VidhyaImg,
+    },
+    {
+      id: 7,
+      name: "Priyanka",
+      designation: "Data engineer",
+      img: IMAGES.PriyankaImg,
+    },
+    {
+      id: 8,
+      name: "Jebha",
+      designation: "Data engineer",
+      img: IMAGES.JebhaImg,
+    },
+    {
+      id: 9,
+      name: "Priyanka",
+      designation: "Data Entry Operator",
+      img: IMAGES.VidhyaImg,
+    },
+  ]);
 
-  useEffect(() => {
-    if (token) {
-      axios
-        .get("http://192.168.1.133:3000/employcards", {
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        })
-        .then((response) => {
-          setUsers(response.data);
-        })
-        .catch((error) => {
-          console.error("Error fetching user data:", error);
-        });
-
-      fetchProfileImage();
-    }
-  }, [token]);
-
-  const fetchProfileImage = () => {
-    axios
-      .get("http://192.168.1.133:3000/profile/image", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((response) => {
-        setProfileImageUrl(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching profile image:", error);
-      });
-  };
-
-  const showUsers = true;
-
+  const showEmployees = true;
   return (
     <div className="all-member-section">
-      {showUsers ? (
-        <div className="container-fluid">
-          <div className="row">
-            {users.map((user) => {
-              // Check if the current user's username matches the logged-in user's username
-              if (user.username !== loginUser) {
-                return (
-                  <EmployCard
-                    key={user.user_Id}
-                    name={user.username}
-                    designation={user.designation}
-                    mobile={user.mobile_no}
-                    img={user.image}
-                  />
-                );
-              }
-              // Return null or nothing if the current user is the logged-in user
-              return null;
+      {showEmployees ? (
+        <>
+         <div className="container-fluid">
+             
+
+           <div className="row">
+            {employees.map((employee) => {
+             
+              return (
+               
+                <EmployCard
+                  key={employee.id}
+                  name={employee.name}
+                  designation={employee.designation}
+                  img={employee.img}
+                />
+              );
             })}
+            </div>
           </div>
-        </div>
+         
+        </>
       ) : (
-        <p>You cannot see the employees</p>
+        <p> you can not see the employ </p>
       )}
     </div>
   );
 }
-
 export default Dashboards;
