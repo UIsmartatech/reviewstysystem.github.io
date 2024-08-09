@@ -29,7 +29,7 @@
 
 .sidebar {
     width: 20%;
-    background: #ffffff;
+    background: #d7d7d742;
     padding: 0px;
     margin-top: 0px;
     border-radius: 15px;
@@ -126,18 +126,3 @@ nav a {
     background-position: 100% 0;
     padding-left: 10px;
   }
-  @media (max-width: 768px) {
-    .sidebarContainer {
-      width: 100%;
-      height: auto;
-      position: relative;
-    }
-    .sidenav nav a {
-      text-align: center;
-      padding: 15px;
-    }
-    .sidenav a span {
-        display: none;
-    }
-  }
-  

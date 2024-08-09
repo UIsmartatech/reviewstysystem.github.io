@@ -5,8 +5,6 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 function DashboardComponent() {
   const [data, setData] = useState(null);
@@ -14,15 +12,6 @@ function DashboardComponent() {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
   const [profileImageUrl, setProfileImageUrl] = useState(null);
-
-  //token variable
-  const token = sessionStorage.getItem("token");
-    if (token) {
-      const decoded = jwtDecode(token);
-      console.log("decode token:", decoded);
-    } else {
-      console.error("no token found");
-    }
 
   useEffect(() => {
     const token = sessionStorage.getItem("token");
@@ -32,26 +21,33 @@ function DashboardComponent() {
     }
 
     axios
-      .get("http://192.168.1.133:3000", {
+      .get("http://localhost:8081", {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
         if (response.data && response.data.token) {
           setData(response.data.token);
         } else {
-          setMessage("login succusfull");
+          setMessage("Unauthorized access");
         }
       })
       .catch((err) => {
         setMessage("Unauthorized access");
       });
   }, []);
+
   useEffect(() => {
     fetchProfileImage();
   }, []);
 
   const fetchProfileImage = () => {
-    
+    const token = sessionStorage.getItem("token");
+    if (token) {
+      const decoded = jwtDecode(token);
+      console.log("decode token:", decoded);
+    } else {
+      console.error("no token found");
+    }
     axios
       .get("http://localhost:8081/profile/image", {
         headers: {
@@ -66,19 +62,15 @@ function DashboardComponent() {
         console.error('Error fetching profile image:', error);
       });
   };
-
-
-  
   return (
     <div className="DashboardContainer">
       <div className="sidebar">
-          <SidebarComponent />
+        <SidebarComponent />
       </div>
       <div className="mainContent">
         <div className="welcome-section">
           <div className="wecome-text">
             <h5> Hi, {name}</h5>
-            {/* {data ? <p>Data: {data}</p> : <p>{message}</p>} */}
             <p>Welcome to the dashboard</p>
           </div>
           <div className="profile-part">

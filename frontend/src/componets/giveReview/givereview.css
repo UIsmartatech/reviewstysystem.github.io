@@ -39,9 +39,6 @@ span.input-group-text {
     display: block;
     padding: 15px;
     margin-bottom: 15px;
-    background: #fff;
-    box-shadow: 1px 2px 3px #dedede;
-    border-radius: 10px;
 }
 .card .card-body {
     text-align: center;
@@ -83,13 +80,6 @@ ul.employ-name {
 .Star{
 cursor: pointer;
 }
-.star-panel {
-    margin-bottom: 16px;
-}
-.star-panel p {
-    margin-bottom: 0px;
-    line-height: 18px;
-}
 .progress {
     height: 6px !important;
     margin-bottom: 10px;
@@ -101,16 +91,7 @@ cursor: pointer;
     font-family: 'poppins-regular';
     margin: 0px 10px;
 }
-.btn-theme {
-    background: #f27022 !important;
-    height: 44px;
-    font-family: 'poppins-regular';
-    font-size: 16px;
-    display: inline-block;
-    /* align-items: center; */
-    text-align: center;
-    margin: auto;
-  }
+
 .criteria p {
     font-family: 'poppins-regular';
     font-size: 14px;

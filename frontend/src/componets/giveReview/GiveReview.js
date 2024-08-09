@@ -6,112 +6,54 @@ import "./givereview.css";
 import ProgressBar from "react-bootstrap/ProgressBar";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import ReviewStar from "./reviewStar";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 
+
 const GiveReview = () => {
   const [review, setReview] = useState("");
   const [profileImageUrl, setProfileImageUrl] = useState(null);
   const [name, setName] = useState("");
-  const [punctuality, setpunctuality] = useState("");
-  const [proactive, setproactive] = useState("");
-  const [support, setsupport] = useState("");
-  const [performance, setperformance] = useState("");
   const [rating, setRating] = useState({});
   const [message, setMessage] = useState("");
   const [reviewee, setreviewee] = useState("");
   const [comment, setComment] = useState("");
   const [reviewstar, setreviewStar] = useState(0);
   const [messageType, setMessageType] = useState("");
+  const [filterName, setfilterName] = useState([]);
+  const [reviewDate, setReviewDate] = useState([]);
   const [records, setRecords] = useState([]);
-  const [givenStar, setgivenStar] = useState([]);
   const [reviewer, setReviewer] = useState("");
-  const [ratings, setRatings] = useState({
-    punctuality: 0,
-    proactive: 0,
-    support: 0,
-    performance: 0,
-  });
-  const categories = [
-    "punctuality",
-    "proactive",
-    "support",
-    "performance",
-    // "Teamwork and Collaboration",
-  ]; // Define your categories
-  const token = sessionStorage.getItem("token");
 
-  // Function to handle star click
-  const handleStarClick = (event, category) => {
-    const ratingValue = parseInt(event.target.value);
-    setRatings((prevRatings) => ({
-      ...prevRatings,
-      [category]: ratingValue,
-    }));
-    console.log(`${category} rating: ${ratingValue} performance stars`);
-    saveRatingToDatabase(category, ratingValue);
-  };
 
-  // Simulate saving to a database
-  const saveRatingToDatabase = (category, ratingValue) => {
-    // Here you would normally make an API call to save the rating
-    console.log(`Rating ${ratingValue} for ${category} saved to the database`);
-  };
 
   useEffect(() => {
     axios
-      .get("http://192.168.1.133:3000/gettotalstar", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      .get("http://localhost:8081/reviewuser")
       .then((response) => {
-        const decoded = jwtDecode(token);
-        const filtertoken = decoded.name;
-        setReviewer(filtertoken);
-        const allgivenStar = response.data;
-        console.log("givenstar", allgivenStar);
-        const startvalue = allgivenStar.totalStars;
-        const punctuality = allgivenStar.totalProactiveStars;
-        const proactive = allgivenStar.totalProactiveStars;
-        const support = allgivenStar.totalpeersupportStars;
-        const performance = allgivenStar.totalperformanceStars;
-        setgivenStar(startvalue);
-        setpunctuality(punctuality);
-        setproactive(proactive);
-        setsupport(support);
-        setperformance(performance);
-      })
-      .catch((error) => {
-        setMessage("Error fetching review user data");
-        console.error("Error fetching data:", error);
-      });
-  });
+        const token = sessionStorage.getItem("token");
 
-  useEffect(() => {
-    axios
-      .get("http://192.168.1.133:3000/reviewuser")
-
-      .then((response) => {
         const decoded = jwtDecode(token);
         const filtertoken = decoded.name;
         setReviewer(filtertoken);
 
-        // console.log("here is the reviewer:", filtertoken);
+        console.log("here is the reviewer:", filtertoken);
 
         const filteredResult = response.data.filter(
           (r) => r.role !== 0 && r.name !== filtertoken
         );
         setRecords(filteredResult);
-        // console.log(records);
+        console.log(records);
       })
       .catch((error) => {
         setMessage("Error fetching review user data");
         console.error("Error fetching data:", error);
       });
   }, []); // Empty dependency array to run once on mount
+
 
   useEffect(() => {
     fetchProfileImage();
@@ -126,7 +68,7 @@ const GiveReview = () => {
       console.error("no token found");
     }
     axios
-      .get("http://192.168.1.133:3000/profile/image", {
+      .get("http://localhost:8081/profile/image", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -140,35 +82,40 @@ const GiveReview = () => {
       });
   };
 
-  const totalStars = Object.values(ratings).reduce(
-    (total, ratings) => total + (ratings || 0),
+  const criteria = ["Performance", "Ability", "Caring", "Lovely"]; // List of criteria
+  const totalStars = Object.values(rating).reduce(
+    (total, rating) => total + (rating || 0),
     0
   );
-  // const handleRatingChange = (criterion, rating) => {
-  //   setRating((prevRatings) => ({
-  //     ...prevRatings,
-  //     [criterion]: rating,
-  //   }));
-  // };
+  const handleRatingChange = (criterion, rating) => {
+    setRating((prevRatings) => ({
+      ...prevRatings,
+      [criterion]: rating,
+    }));
+  };
 
   const handleRadioChange = (event) => {
     setreviewee(event.target.value);
   };
 
-  const handleSubmit = (event, category, ratingValue) => {
+  const Performance =  Object.values(rating);
+  console.log(Performance);
+
+  const handleSubmit = (event) => {
     event.preventDefault();
+
     // Validate fields
-    if (!reviewee || !totalStars || !comment || !ratings) {
+    if (!reviewee || !totalStars || !comment) {
       setMessage("All fields are required.");
       setMessageType("error");
       return;
     }
-
+    const token = sessionStorage.getItem("token");
     if (token) {
       const decoded = jwtDecode(token);
       const decodedname = decoded.name;
       setReviewer(decodedname);
-      // console.log("here is the reviewer:", decodedname);
+      console.log("here is the reviewer:", decodedname);
     } else {
       console.error("no token found");
     }
@@ -177,13 +124,12 @@ const GiveReview = () => {
       reviewee: reviewee,
       comment: comment,
       totalStars: totalStars,
-      ratings: ratings, // Include individual category ratings
     };
-console.log(reviewData);
+
     axios
-      .post("http://192.168.1.133:3000/review", reviewData, {
+      .post("http://localhost:8081/review", reviewData, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `bearer ${token}`,
         },
       })
 
@@ -194,12 +140,6 @@ console.log(reviewData);
         setreviewee("");
         setComment("");
         setreviewStar(0);
-        setRatings({
-          punctuality: 0,
-          proactive: 0,
-          support: 0,
-          performance: 0,
-        });
       })
       .catch((error) => {
         setMessage("You can only review this employee  per month once only.");
@@ -220,6 +160,7 @@ console.log(reviewData);
               <div className="wecome-text">
                 <h5> Please write your review </h5>
               </div>
+              <div className="profile-part">
                 <div className="profile-part">
                   <p>{name}</p>
                   <img
@@ -228,6 +169,7 @@ console.log(reviewData);
                     alt="Profile"
                   />
                 </div>
+              </div>
             </div>
 
             <div className="all-card-section">
@@ -251,9 +193,8 @@ console.log(reviewData);
                           {" "}
                           <p>
                             <span className="small"></span>{" "}
-                            <span className="small">
-                              Recieved stars:<strong> {givenStar}</strong>{" "}
-                            </span>
+                            <Star className="text-yellow-600" />{" "}
+                            <span className="small">({totalStars} reviews)</span>
                           </p>
                         </div>
                       </div>
@@ -263,34 +204,10 @@ console.log(reviewData);
                     <div className="progressbar">
                       <div className="d-flex align-items-center justify-content-center">
                         {" "}
-                        <span> Punctuality</span>
-                        <ProgressBar variant="warning" now={punctuality} />{" "}
+                        <span> 5 Star</span>
+                        <ProgressBar variant="warning" now={40} />{" "}
                         <a href="">
-                          <span>{punctuality} reviews</span>
-                        </a>{" "}
-                      </div>
-                      <div className="d-flex align-items-center justify-content-center">
-                        {" "}
-                        <span>Proactive</span>
-                        <ProgressBar variant="warning" now={proactive} />{" "}
-                        <a href="">
-                          <span>{proactive} reviews</span>
-                        </a>{" "}
-                      </div>
-                      <div className="d-flex align-items-center justify-content-center">
-                        {" "}
-                        <span> Peer support</span>
-                        <ProgressBar variant="warning" now={support} />{" "}
-                        <a href="">
-                          <span>{support} reviews</span>
-                        </a>{" "}
-                      </div>
-                      <div className="d-flex align-items-center justify-content-center">
-                        {" "}
-                        <span>Performance</span>
-                        <ProgressBar variant="warning" now={performance} />{" "}
-                        <a href="">
-                          <span>{performance} reviews</span>
+                          <span>5 reviews</span>
                         </a>{" "}
                       </div>
                     </div>
@@ -332,54 +249,19 @@ console.log(reviewData);
                 <InputGroup className="m-3">
                   <div className="star-icons-panel d-flex">
                     <div className="star-icons">
-                      <div>
-                        {categories.map((category) => (
-                          <div key={category} className="star-panel">
-                            <p>
-                              {category.charAt(0).toUpperCase() +
-                                category.slice(1)}
-                            </p>
-                            <div
-                              style={{
-                                display: "flex",
-                                flexDirection: "row",
-                                justifyContent: "left",
-                              }}
-                            >
-                              {[1, 2, 3, 4, 5].map((star) => (
-                                <label
-                                  key={star}
-                                  style={{
-                                    cursor: "pointer",
-                                    fontSize: "1.5rem",
-                                    color:
-                                      star <= ratings[category]
-                                        ? "gold"
-                                        : "gray",
-                                  }}
-                                >
-                                  <input
-                                    type="radio"
-                                    name={`${category}-rating`}
-                                    value={star}
-                                    style={{ display: "none" }}
-                                    onChange={(e) =>
-                                      handleStarClick(e, category)
-                                    }
-                                  />
-                                  <Star />
-                                </label>
-                              ))}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
+                      {criteria.map((criterion) => (
+                        <ReviewStar
+                          key={criterion}
+                          criterion={criterion}
+                          onRatingChange={handleRatingChange}
+                        />
+                      ))}
                     </div>
-                    {/* <div className="criteria">
+                    <div className="criteria">
                       {criteria.map((criterion) => (
                         <p key={criterion}>{criterion}</p>
                       ))}
-                    </div> */}
+                    </div>
                     <input
                       name="totalStar"
                       className="d-none"
@@ -415,7 +297,7 @@ console.log(reviewData);
                   as="input"
                   type="submit"
                   value="Sumbit"
-                  className="mt-3  btn-theme"
+                  className="my-3"
                 />{" "}
                 {message && (
                   <p

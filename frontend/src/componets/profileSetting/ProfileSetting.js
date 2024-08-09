@@ -1,6 +1,8 @@
 import React, { useRef, useState, useEffect } from "react";
 import SidebarComponent from "../sidebar/sidebar";
 import Card from "react-bootstrap/Card";
+import * as Icons from "@mui/icons-material";
+import IMAGES from "../../Assets/profile_img/profile_images";
 import "./profileSetting.css";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
@@ -18,13 +20,10 @@ function ProfileSetting() {
   const [joinDate, setJoinDate] = useState("");
   const [profileImageUrl, setProfileImageUrl] = useState(null);
   const [message, setMessage] = useState("");
-  const [users, setUsers] = useState([""]);
-  const token = sessionStorage.getItem("token");
 
   const handleInputChange = (event) => {
-    
     const { name, value } = event.target;
-    if (name === "username") {
+    if (name === "name") {
       setName(value);
     } else if (name === "email") {
       setEmail(value);
@@ -44,8 +43,7 @@ function ProfileSetting() {
     setImage(event.target.files[0]);
   };
 
-  const handleFileUpload = (event) => {
-    event.preventDefault();
+  const handleFileUpload = () => {
     const token = sessionStorage.getItem("token");
     if (token) {
       const decoded = jwtDecode(token);
@@ -57,7 +55,7 @@ function ProfileSetting() {
     formData.append("image", Image);
 
     axios
-      .post("http://192.168.1.133:3000/upload", formData, {
+      .post("http://localhost:8081/upload", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
@@ -83,21 +81,14 @@ function ProfileSetting() {
     event.preventDefault();
     const profileData = { name, email, mobile, designation, joinDate };
     axios
-      .post("http://192.168.1.133:3000/personal-profile-insert", profileData)
+      .post("http://localhost:8081/personal-profile-insert", profileData)
       .then((res) => {
         if (res.data.Status === "success") {
-          setMessage(`Profile added successfully`);
+          console.log("succeed");
           setMessage("successfull attempt");
         } else {
           console.log("failed");
           setMessage("unsuccessfull attempt");
-        }
-      })
-      .catch(err => {
-        if (err.response && err.response.status === 409) {
-          setMessage('Profile already exists');
-        } else {
-          setMessage('Error adding profile');
         }
       });
   };
@@ -115,7 +106,7 @@ function ProfileSetting() {
       console.error("no token found");
     }
     axios
-      .get("http://192.168.1.133:3000/profile/image", {
+      .get("http://localhost:8081/profile/image", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -128,19 +119,7 @@ function ProfileSetting() {
         console.error("Error fetching profile image:", error);
       });
   };
-  useEffect(() => {
-    axios
-      .get("http://192.168.1.133:3000/profilepagedata", {
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-      })
-      .then((response) => {
-        const userdata = response.data;
-        setUsers(userdata);
-        console.log(userdata);
-      });
-    }, []);
+  
 
   return (
     <>
@@ -148,7 +127,6 @@ function ProfileSetting() {
         <div className="sidebar">
           <SidebarComponent />
         </div>
-        {users && (
         <div className="mainContent">
           <div className="welcome-section">
             <div className="wecome-text">
@@ -164,7 +142,6 @@ function ProfileSetting() {
             </div>
           </div>
           <div className=" employ-detail-panel">
-          {users.map((user) => (
             <Card>
               <div className="profile-upload-panel">
                 <div className="employ-img-edit" onClick={handleImgClick}>
@@ -190,28 +167,27 @@ function ProfileSetting() {
                       className="d-none"
                     />
                   </div>
-                  <div className="button-group">
+                </div>
+                <div className="button-group">
                   <Button
                     as="input"
                     type="button"
                     value="update profile"
-                    className="mt-1 d-block btn-theme"
+                    className="mt-1 d-block"
                     onClick={handleFileUpload}
                   />
                   {message && <p>{message}</p>}
                 </div>
-                </div>
-
               </div>
               <Form className="profile-container">
                 <Form.Group className="mb-3" controlId="formName">
                   <Form.Label>Your Name</Form.Label>
                   <Form.Control
                     type="text"
-                    name="username"
+                    name="name"
                     placeholder="Your full name"
-                    value={user.username}
-                    onChange={handleInputChange} disabled
+                    value={name}
+                    onChange={handleInputChange}
                   />
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="formEmail">
@@ -220,9 +196,8 @@ function ProfileSetting() {
                     type="email"
                     name="email"
                     placeholder="name@example.com"
-                    value={user.email}
+                    value={email}
                     onChange={handleInputChange}
-                    disabled
                   />
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="formMobile">
@@ -231,9 +206,8 @@ function ProfileSetting() {
                     type="text"
                     name="mobile"
                     placeholder="+91 0000 00 0000"
-                    value={user.mobile_no}
+                    value={mobile}
                     onChange={handleInputChange}
-                    disabled
                   />
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="formDesignation">
@@ -242,37 +216,32 @@ function ProfileSetting() {
                     type="text"
                     name="designation"
                     placeholder="Please enter designation"
-                    value={user.designation}
+                    value={designation}
                     onChange={handleInputChange}
-                    disabled
                   />
                 </Form.Group>
-                 <Form.Group className="mb-3" controlId="formJoinDate">
+                <Form.Group className="mb-3" controlId="formJoinDate">
                   <Form.Label>Join date</Form.Label>
                   <Form.Control
-                    type="text"
+                    type="date"
                     name="joinDate"
-                    value={user.join_date}
+                    value={joinDate}
                     onChange={handleInputChange}
-                    disabled
                   />
                 </Form.Group>
-                <div className="button-group btn-theme">
-                  {/* <Button
+                <div className="button-group">
+                  <Button
                     as="input"
                     type="button"
                     value="Update Details"
-                    className="mt-2 .button-group btn-theme d-block"
+                    className="mt-2 d-block"
                     onClick={handleProfile}
-                  /> */}
+                  />
                 </div>
               </Form>
-              {message && <p>{message}</p>}
             </Card>
-           ))}
           </div>
         </div>
-        )}
       </div>
     </>
   );
