@@ -4,7 +4,7 @@ import Card  from 'react-bootstrap/Card';
 import StarBorder from '@mui/icons-material/StarBorder';
 
 function EmployCard(user) {
-  const baseUrl = 'http://localhost:8081/public/images/';
+  const baseUrl = 'http://192.168.1.134:3000/public/image/';
   const imageUrl = baseUrl + user.img; // Combine base URL with user's image path
   return (
     <div className="col-sm-3">

@@ -29,7 +29,7 @@ function Dashboards() {
   useEffect(() => {
     if (token) {
       axios
-        .get("http://localhost:8081/employcards", {
+        .get("http://192.168.1.133:3000/employcards", {
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -47,7 +47,7 @@ function Dashboards() {
 
   const fetchProfileImage = () => {
     axios
-      .get("http://localhost:8081/profile/image", {
+      .get("http://192.168.1.133:3000/profile/image", {
         headers: {
           Authorization: `Bearer ${token}`,
         },

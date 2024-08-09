@@ -62,7 +62,7 @@ const GiveReview = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8081/gettotalstar", {
+      .get("http://192.168.1.133:3000/gettotalstar", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -92,7 +92,7 @@ const GiveReview = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8081/reviewuser")
+      .get("http://192.168.1.133:3000/reviewuser")
 
       .then((response) => {
         const decoded = jwtDecode(token);
@@ -126,7 +126,7 @@ const GiveReview = () => {
       console.error("no token found");
     }
     axios
-      .get("http://localhost:8081/profile/image", {
+      .get("http://192.168.1.133:3000/profile/image", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -181,7 +181,7 @@ const GiveReview = () => {
     };
 console.log(reviewData);
     axios
-      .post("http://localhost:8081/review", reviewData, {
+      .post("http://192.168.1.133:3000/review", reviewData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

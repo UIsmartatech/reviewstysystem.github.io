@@ -57,7 +57,7 @@ function ProfileSetting() {
     formData.append("image", Image);
 
     axios
-      .post("http://localhost:8081/upload", formData, {
+      .post("http://192.168.1.133:3000/upload", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
@@ -83,7 +83,7 @@ function ProfileSetting() {
     event.preventDefault();
     const profileData = { name, email, mobile, designation, joinDate };
     axios
-      .post("http://localhost:8081/personal-profile-insert", profileData)
+      .post("http://192.168.1.133:3000/personal-profile-insert", profileData)
       .then((res) => {
         if (res.data.Status === "success") {
           setMessage(`Profile added successfully`);
@@ -115,7 +115,7 @@ function ProfileSetting() {
       console.error("no token found");
     }
     axios
-      .get("http://localhost:8081/profile/image", {
+      .get("http://192.168.1.133:3000/profile/image", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -130,7 +130,7 @@ function ProfileSetting() {
   };
   useEffect(() => {
     axios
-      .get("http://localhost:8081/profilepagedata", {
+      .get("http://192.168.1.133:3000/profilepagedata", {
         headers: {
           authorization: `Bearer ${token}`,
         },

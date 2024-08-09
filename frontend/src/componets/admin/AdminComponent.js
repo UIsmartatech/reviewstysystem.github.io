@@ -18,7 +18,7 @@ function AdminComponent() {
     }
 
     axios
-      .get("http://localhost:8081", {
+      .get("http://192.168.1.133:3000", {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {

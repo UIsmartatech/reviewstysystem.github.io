@@ -17,7 +17,7 @@ const LoginComponent = () => {
   const sendotp = (event) => {
     event.preventDefault();
     axios
-      .post("http://192.168.1.133/send-otp", { email })
+      .post("http://192.168.1.133:3000/send-otp", { email })
       .then((response) => {
         if (response.status === 200) {
           setOtpSent(true);
@@ -35,7 +35,7 @@ const LoginComponent = () => {
   const verifyOtp = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post("http://192.168.1.133/verify-otp", {
+      const response = await axios.post("http://192.168.1.133:3000/verify-otp", {
         email,
         otp,
       });
